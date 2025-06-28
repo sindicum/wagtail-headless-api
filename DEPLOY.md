@@ -126,7 +126,7 @@ server_name your-domain.com;
 ### 4.1 Docker コンテナの起動
 
 ```bash
-docker-compose -f docker-compose-prod.yml up -d
+docker compose -f docker-compose-prod.yml up -d
 ```
 
 ### 4.2 初期設定の実行
@@ -140,10 +140,10 @@ chmod +x production_setup.sh
 
 ```bash
 # コンテナの状態確認
-docker-compose -f docker-compose-prod.yml ps
+docker compose -f docker-compose-prod.yml ps
 
 # ログ確認
-docker-compose -f docker-compose-prod.yml logs -f
+docker compose -f docker-compose-prod.yml logs -f
 ```
 
 ## 5. SSL 証明書の設定（Let's Encrypt）
@@ -158,7 +158,7 @@ sudo apt install certbot python3-certbot-nginx -y
 ### 5.2 一時的に Nginx を停止
 
 ```bash
-docker-compose -f docker-compose-prod.yml stop nginx
+docker compose -f docker-compose-prod.yml stop nginx
 ```
 
 ### 5.3 証明書の取得
@@ -195,7 +195,7 @@ server {
 
 ### 5.5 証明書をコンテナにマウント
 
-`docker-compose-prod.yml`の nginx サービスに追加:
+`docker compose-prod.yml`の nginx サービスに追加:
 
 ```yaml
 nginx:
@@ -216,7 +216,7 @@ docker-compose -f docker-compose-prod.yml up -d nginx
 
 ```bash
 # データベースバックアップ
-docker-compose -f docker-compose-prod.yml exec db pg_dump -U postgres wagtailheadlessapi > backup_$(date +%Y%m%d).sql
+docker compose -f docker-compose-prod.yml exec db pg_dump -U postgres wagtailheadlessapi > backup_$(date +%Y%m%d).sql
 
 # メディアファイルバックアップ
 tar -czf media_backup_$(date +%Y%m%d).tar.gz backend/media/
@@ -229,26 +229,26 @@ tar -czf media_backup_$(date +%Y%m%d).tar.gz backend/media/
 git pull origin main
 
 # コンテナ再ビルド・再起動
-docker-compose -f docker-compose-prod.yml down
-docker-compose -f docker-compose-prod.yml build
-docker-compose -f docker-compose-prod.yml up -d
+docker compose -f docker-compose-prod.yml down
+docker compose -f docker-compose-prod.yml build
+docker compose -f docker-compose-prod.yml up -d
 
 # マイグレーション実行
-docker-compose -f docker-compose-prod.yml exec backend python manage.py migrate
+docker compose -f docker-compose-prod.yml exec backend python manage.py migrate
 
 # 静的ファイル収集
-docker-compose -f docker-compose-prod.yml exec backend python manage.py collectstatic --noinput
+docker compose -f docker-compose-prod.yml exec backend python manage.py collectstatic --noinput
 ```
 
 ### 6.3 ログ確認
 
 ```bash
 # すべてのログ
-docker-compose -f docker-compose-prod.yml logs
+docker compose -f docker-compose-prod.yml logs
 
 # 特定のサービスのログ
-docker-compose -f docker-compose-prod.yml logs backend
-docker-compose -f docker-compose-prod.yml logs nginx
+docker compose -f docker-compose-prod.yml logs backend
+docker compose -f docker-compose-prod.yml logs nginx
 ```
 
 ### 6.4 証明書の自動更新設定
@@ -258,7 +258,7 @@ docker-compose -f docker-compose-prod.yml logs nginx
 sudo crontab -e
 
 # 以下を追加
-0 2 * * * certbot renew --pre-hook "docker-compose -f /home/deploy/WagtailHeadlessAPI/docker-compose-prod.yml stop nginx" --post-hook "docker-compose -f /home/deploy/WagtailHeadlessAPI/docker-compose-prod.yml start nginx"
+0 2 * * * certbot renew --pre-hook "docker compose -f /home/deploy/WagtailHeadlessAPI/docker-compose-prod.yml stop nginx" --post-hook "docker compose -f /home/deploy/WagtailHeadlessAPI/docker-compose-prod.yml start nginx"
 ```
 
 ## トラブルシューティング
@@ -275,7 +275,7 @@ sudo lsof -i :443
 
 ```bash
 # 詳細なログを確認
-docker-compose -f docker-compose-prod.yml logs --tail=100
+docker compose -f docker-compose-prod.yml logs --tail=100
 ```
 
 ### 権限エラー
@@ -283,4 +283,10 @@ docker-compose -f docker-compose-prod.yml logs --tail=100
 ```bash
 # ファイル権限の修正
 sudo chown -R deploy:deploy ~/WagtailHeadlessAPI
+```
+
+### メモリ使用量確認
+
+```bash
+docker stats wagtailheadlessapi_backend_prod
 ```
