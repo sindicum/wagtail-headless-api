@@ -1,0 +1,6 @@
+Django>=5.1,<5.2
+wagtail>=6.4,<6.5
+wagtailcodeblock>=1.29,<1.30
+psycopg[binary]>=3.1,<4.0
+gunicorn>=21.2,<22.0
+django-cors-headers>=4.3,<5.0
