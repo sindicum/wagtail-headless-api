@@ -38,6 +38,9 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
             content_type__model='blogrootpage'
         )
         
+        # タグ情報をプリフェッチ
+        queryset = queryset.prefetch_related('tagged_items__tag')
+        
         # タグフィルタリング
         tag = self.request.GET.get('tag')
         if tag:

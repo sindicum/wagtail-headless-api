@@ -7,10 +7,21 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# 必要なシステムパッケージをインストール
+# # 必要なシステムパッケージをインストール
+# RUN apt-get update && apt-get install -y \
+#     gcc \
+#     libpq-dev \
+#     && rm -rf /var/lib/apt/lists/*
+
+# システムパッケージの更新とNode.jsのインストール
 RUN apt-get update && apt-get install -y \
-    gcc \
-    libpq-dev \
+    curl \
+    wget \
+    gnupg2 \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g @anthropic-ai/claude-code \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Pythonの依存関係をインストール
