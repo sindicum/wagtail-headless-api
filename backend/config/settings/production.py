@@ -48,3 +48,33 @@ MIDDLEWARE = [
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
     'home.middleware.RequestLoggingMiddleware',  # カスタムロギングミドルウェア
 ]
+
+# CORS Settings for Production
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if os.getenv("CORS_ALLOWED_ORIGINS") else []
+
+
+# 許可するHTTPメソッドを明示的に指定
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+# 許可するヘッダー
+CORS_ALLOWED_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# プリフライトリクエストのキャッシュ時間（1時間）
+CORS_PREFLIGHT_MAX_AGE = 3600
