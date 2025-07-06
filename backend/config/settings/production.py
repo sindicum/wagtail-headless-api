@@ -1,5 +1,5 @@
 from .base import *
-from .logging import LOGGING as LOGGING_CONFIG
+from .logging import LOGGING as LOGGING_SETTINGS
 import os
 
 
@@ -101,4 +101,4 @@ PERMISSIONS_POLICY = {
     "usb": []
 }
 
-LOGGING = LOGGING_CONFIG
+LOGGING = LOGGING_SETTINGS
