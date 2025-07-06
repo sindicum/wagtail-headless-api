@@ -14,6 +14,7 @@ urlpatterns = [
     path("wagtail-admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path('wagtail-api/', api_router.urls),
+    path('django-api/contact/', include('contact.urls')),
 ]
 
 if settings.DEBUG:

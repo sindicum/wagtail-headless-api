@@ -1,0 +1,115 @@
+{% extends "wagtailsnippets/snippets/edit.html" %}
+{% load wagtailadmin_tags %}
+
+{% block extra_css %}
+    {{ block.super }}
+    <style>
+        .reply-section {
+            border: 1px solid #e6e6e6;
+            border-radius: 3px;
+            padding: 20px;
+            margin-top: 20px;
+            background: #fafafa;
+        }
+        .reply-history {
+            margin-top: 20px;
+        }
+        .reply-item {
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+        }
+        .reply-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .status-new { color: #cd3238; font-weight: bold; }
+        .status-in_progress { color: #f39c12; font-weight: bold; }
+        .status-completed { color: #189370; font-weight: bold; }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+    
+    {% if object.pk %}
+        <div class="reply-section">
+            <h3><span class="icon icon-mail"></span> メール返信</h3>
+            
+            <form method="post" action="{% url 'contact_send_reply' object.pk %}">
+                {% csrf_token %}
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="template_select">テンプレート選択:</label>
+                    <select id="template_select" onchange="loadTemplate()">
+                        <option value="">-- テンプレートを選択 --</option>
+                        {% for template in email_templates %}
+                            <option value="{{ template.pk }}" 
+                                    data-subject="{{ template.subject|escapejs }}" 
+                                    data-body="{{ template.body|escapejs }}">
+                                {{ template.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="subject">件名:</label>
+                    <input type="text" id="subject" name="subject" style="width: 100%; padding: 8px;" required>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="body">本文:</label>
+                    <textarea id="body" name="body" rows="10" style="width: 100%; padding: 8px;" required placeholder="{{object.name}}様への返信内容を入力してください..."></textarea>
+                </div>
+                
+                <button type="submit" class="button">
+                    <span class="icon icon-mail"></span> メール送信
+                </button>
+            </form>
+        </div>
+        
+        {% if object.replies.exists %}
+            <div class="reply-history">
+                <h3><span class="icon icon-history"></span> 返信履歴</h3>
+                {% for reply in object.replies.all %}
+                    <div class="reply-item">
+                        <div class="reply-meta">
+                            <strong>{{ reply.subject }}</strong> - 
+                            {{ reply.sent_at|date:"Y年m月d日 H:i" }} by {{ reply.sent_by.username }}
+                        </div>
+                        <div class="reply-content">
+                            {{ reply.body|linebreaksbr }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <script>
+        function loadTemplate() {
+            const select = document.getElementById('template_select');
+            const option = select.options[select.selectedIndex];
+            
+            if (option.value) {
+                // データ属性から安全に値を取得
+                const subject = option.getAttribute('data-subject');
+                const body = option.getAttribute('data-body');
+                
+                // サーバーサイドで生成された安全な値を使用
+                const contactName = {{ object.name|escapejs|safe }};
+                const userName = {{ user.get_full_name|default:user.username|escapejs|safe }};
+                
+                // テンプレート変数を置換
+                document.getElementById('subject').value = subject;
+                document.getElementById('body').value = body
+                    .replace('{{name}}', contactName)
+                    .replace('{{担当者名}}', userName);
+            }
+        }
+    </script>
+{% endblock %}

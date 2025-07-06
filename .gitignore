@@ -33,6 +33,7 @@ static/
 *~
 .devcontainer/
 .claude/
+devmemo/*.md
 
 # OS
 .DS_Store
@@ -46,8 +47,8 @@ Thumbs.db
 # Project specific
 memo.md
 install_claudecode_docker.sh
-backend/home/migrations/*.py
-!backend/home/migrations/__init__.py
+backend/*/migrations/*.py
+!backend/*/migrations/__init__.py
 
 # Docker volumes (local development)
 postgres_data/
