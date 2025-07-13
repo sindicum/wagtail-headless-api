@@ -52,14 +52,6 @@ LOGGING = {
             'backupCount': 10,
             'formatter': 'verbose',
         },
-        'contact_security_file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/app/logs/contact_security.log',
-            'maxBytes': 1024 * 1024 * 10,  # 10MB
-            'backupCount': 20,  # 長期保存用
-            'formatter': 'verbose',
-        },
     },
     'loggers': {
         'django': {
@@ -85,11 +77,6 @@ LOGGING = {
         'home': {
             'handlers': ['console', 'file'],
             'level': 'INFO',
-            'propagate': False,
-        },
-        'contact': {
-            'handlers': ['console', 'file', 'contact_security_file'],
-            'level': 'DEBUG' if os.environ.get('DEBUG', 'False') == 'True' else 'INFO',
             'propagate': False,
         },
     },

@@ -1,3 +1,4 @@
+import logging
 from django.urls import path
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -8,6 +9,8 @@ from wagtail.snippets.views.snippets import SnippetViewSet, EditView as SnippetE
 from wagtail.snippets.models import register_snippet
 from .models import Contact, ContactReply, EmailTemplate
 from .forms import ContactEditForm
+
+logger = logging.getLogger(__name__)
 
 
 class ContactEditView(SnippetEditView):
